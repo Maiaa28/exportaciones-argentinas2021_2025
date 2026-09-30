@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolución de las Exportaciones Argentinas (2021-2025)</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1b365d;
+            --primary-dark: #0f223f;
+            --secondary: #008080;
+            --accent: #d99b26;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Header & Navigation */
+        header {
+            background-color: var(--primary-dark);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(27, 54, 93, 0.92), rgba(15, 34, 63, 0.95)), url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+            color: white;
+            padding: 10rem 2rem 6rem;
+            text-align: center;
+            clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .academic-badge {
+            display: inline-block;
+            background-color: rgba(217, 155, 38, 0.2);
+            color: #f6ad55;
+            border: 1px solid var(--accent);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            margin-bottom: 1.2rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--accent);
+            color: #1a202c;
+            padding: 0.8rem 2rem;
+            border-radius: 4px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: #c08520;
+            transform: translateY(-2px);
+        }
+
+        /* Main Container Layout */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border);
+        }
+
+        section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        section h2 i {
+            color: var(--secondary);
+            font-size: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text-main);
+        }
+
+        /* Highlights / Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: var(--light-bg);
+            border-left: 4px solid var(--secondary);
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card .trend {
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            font-weight: 600;
+        }
+
+        .trend.pos { color: #16a34a; }
+        .trend.neg { color: #dc2626; }
+
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: rgba(0, 128, 128, 0.02);
+        }
+
+        /* Charts Container */
+        .chart-container {
+            position: relative;
+            margin: 2rem auto;
+            height: 380px;
+            max-width: 900px;
+        }
+
+        /* Accordion / Cards for Normative */
+        .norm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .norm-card {
+            background: var(--light-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .norm-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .norm-card h4 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .norm-card h4 i {
+            color: var(--accent);
+        }
+
+        .norm-card span.badge-norm {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #475569;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
+        /* Sources List */
+        .sources-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sources-list li {
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .sources-list li i {
+            color: var(--secondary);
+            margin-top: 4px;
+        }
+
+        .sources-list a {
+            color: #2563eb;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .sources-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            color: #94a3b8;
+            text-align: center;
+            padding: 2.5rem 2rem;
+            font-size: 0.9rem;
+            border-top: 3px solid var(--accent);
+        }
+
+        footer p {
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: var(--primary-dark);
+                padding: 1.5rem;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+            nav ul.active {
+                display: flex;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .hero h1 {
+                font-size: 2.1rem;
+            }
+            section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fa-solid fa-ship"></i> ComEx Argentina 2021-2025
+            </div>
+            <div class="menu-toggle" id="mobile-menu">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            <nav>
+                <ul id="nav-list">
+                    <li><a href="#introduccion">Introducción</a></li>
+                    <li><a href="#metodologia">Metodología</a></li>
+                    <li><a href="#evolucion">Evolución Anual</a></li>
+                    <li><a href="#rubros">Grandes Rubros</a></li>
+                    <li><a href="#normativa">Marco Normativo</a></li>
+                    <li><a href="#conclusiones">Conclusiones</a></li>
+                    <li><a href="#fuentes">Fuentes</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" style="margin:0; border-radius:0; border:none;">
+        <div class="hero-content">
+            <div class="academic-badge">Proyecto Académico • Comercio Internacional y Despacho Aduanero</div>
+            <h1>Evolución de las exportaciones argentinas 2021-2025</h1>
+            <p>Análisis exhaustivo del comportamiento de las exportaciones de bienes, su composición sectorial, el impacto de variables climáticas y el marco normativo aduanero vigente.</p>
+            <a href="#introduccion" class="btn-primary"><i class="fa-solid fa-arrow-down"></i> Explorar Investigación</a>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- 1 & 2. Introducción y Objetivo -->
+        <section id="introduccion">
+            <h2><i class="fa-solid fa-bullseye"></i> 1. Introducción y Objetivo del Proyecto</h2>
+            <p>Este sitio web académico ha sido desarrollado en el marco de la carrera de <strong>Comercio Internacional y Despacho Aduanero</strong> con el propósito central de analizar el comportamiento y la evolución de las exportaciones de bienes de la República Argentina durante el quinquenio <strong>2021-2025</strong>.</p>
+            <p>El estudio vincula de manera directa las estadísticas oficiales provistas por el Instituto Nacional de Estadística y Censos (INDEC) mediante el Intercambio Comercial Argentino (ICA), con las modificaciones normativas, fiscales y regulatorias de comercio exterior implementadas a lo largo de este período. Se busca comprender cómo factores macroeconómicos, climáticos y regulatorios moldearon el perfil exportador argentino en una etapa marcada por la alta volatilidad.</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Valor Mínimo (2023)</h3>
+                    <div class="value">USD 66.788 M</div>
+                    <div class="trend neg"><i class="fa-solid fa-arrow-trend-down"></i> -24.5% (Sequía)</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Valor Máximo (2022)</h3>
+                    <div class="value">USD 88.446 M</div>
+                    <div class="trend pos"><i class="fa-solid fa-arrow-trend-up"></i> +13.5% (Precios récord)</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Cierre del Periodo (2025)</h3>
+                    <div class="value">USD 87.111 M</div>
+                    <div class="trend pos"><i class="fa-solid fa-arrow-trend-up"></i> +9.3% (Volúmenes)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Metodología -->
+        <section id="metodologia">
+            <h2><i class="fa-solid fa-clipboard-list"></i> 2. Metodología de Análisis</h2>
+            <p>Para la elaboración de este proyecto se adoptó una metodología cuantitativa y cualitativa basada estrictamente en la triangulación de fuentes oficiales y bases de datos institucionales:</p>
+            <ul>
+                <li><strong>Fuentes Estadísticas Oficiales:</strong> Extracción y procesamiento de datos anuales del INDEC (Intercambio Comercial Argentino - ICA y cuadros de exportación por grandes rubros).</li>
+                <li><strong>Archivos de Trabajo Analítico:</strong> Utilización de las series estructuradas en planillas de cálculo (<code>Excel_1_Evolucion_Exportaciones_2021_2025.xlsx</code> y <code>Excel_2_Grandes_Rubros_Exportaciones_2021_2025.xlsx</code>) y documentos de síntesis institucional (<code>Word_Analisis_Exportaciones_Argentina_2021_2025-1.docx</code>).</li>
+                <li><strong>Relevamiento Normativo:</strong> Búsqueda en el Boletín Oficial de la República Argentina y portales oficiales (Argentina.gob.ar / ARCA / AFIP) de los decretos y resoluciones que afectaron derechos de exportación (D.E.), reintegros aduaneros (R.E.) y regímenes simplificados.</li>
+            </ul>
+        </section>
+
+        <!-- 4 & 5. Datos y Tablas de Exportaciones -->
+        <section id="evolucion">
+            <h2><i class="fa-solid fa-chart-line"></i> 3. Evolución Anual y Tablas de Datos (2021-2025)</h2>
+            <p>Los valores absolutos de exportaciones de bienes (en millones de USD) y sus respectivas variaciones interanuales demuestran un comportamiento oscilante y no lineal a lo largo del quinquenio analizado:</p>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Año</th>
+                            <th>Exportaciones (Millones USD)</th>
+                            <th>Variación Interanual (%)</th>
+                            <th>Comportamiento Principal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>2021</strong></td>
+                            <td>$77.934</td>
+                            <td>— (Año base)</td>
+                            <td>Rebote pospandemia, incremento de precios y cantidades.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2022</strong></td>
+                            <td>$88.446</td>
+                            <td>+13,5%</td>
+                            <td>Máximo valor del período, impulsado por altos precios internacionales.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2023</strong></td>
+                            <td>$66.788</td>
+                            <td>-24,5%</td>
+                            <td>Fuerte desplome asociado a factores climáticos adversos (sequía).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2024</strong></td>
+                            <td>$79.721</td>
+                            <td>+19,4%</td>
+                            <td>Fuerte recuperación impulsada por la normalización de volúmenes físicos.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2025</strong></td>
+                            <td>$87.111</td>
+                            <td>+9,3%</td>
+                            <td>Continuación de la expansión sustentada en mayores cantidades exportadas.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;"><em>Fuente: INDEC - Intercambio Comercial Argentino (Bienes). Los datos coinciden con los registros institucionales proporcionados.</em></p>
+        </section>
+
+        <!-- 6. Gráficos Interactivos -->
+        <section id="graficos">
+            <h2><i class="fa-solid fa-chart-bar"></i> 4. Visualización Gráfica de la Evolución</h2>
+            <p>El siguiente gráfico permite observar la marcada volatilidad experimentada por las exportaciones argentinas, reflejando el pico alcanzado en 2022, la caída abrupta de 2023 y la posterior senda de recuperación en 2024 y 2025.</p>
+            <div class="chart-container">
+                <canvas id="exportChart"></canvas>
+            </div>
+        </section>
+
+        <!-- 7. Análisis de Variaciones -->
+        <section id="variaciones">
+            <h2><i class="fa-solid fa-magnifying-glass-chart"></i> 5. Análisis de las Principales Variaciones Anuales</h2>
+            <p>Una lectura detallada año por año permite explicar los factores subyacentes detrás de cada fluctuación:</p>
+            <ul>
+                <li><strong>2021 (Rebote Inicial):</strong> Con USD 77.934 millones, representó la salida de los efectos más deprimidos de la crisis internacional y sanitaria previa, combinando mejoras tanto en volúmenes como en cotizaciones internacionales.</li>
+                <li><strong>2022 (Máximo Histórico):</strong> Alcanzó los USD 88.446 millones (+13,5%), constituyéndose en el techo del período. Este hito respondió fundamentalmente a un fenómeno de precios internacionales elevados en commodities agrícolas y energéticos.</li>
+                <li><strong>2023 (Quiebre por Sequía):</strong> Sufrió una contracción histórica de -24,5%, cayendo hasta los USD 66.788 millones. La causa principal fue la severa sequía que afectó la campaña agrícola, mermando drásticamente la oferta exportable de granos y derivados.</li>
+                <li><strong>2024 (Recuperación Física):</strong> Registró USD 79.721 millones (+19,4%), evidenciando una sólida resiliencia económica basada en la recuperación de los volúmenes físicos cosechados y exportados.</li>
+                <li><strong>2025 (Consolidación del Crecimiento):</strong> Cerró en USD 87.111 millones (+9,3%). Según los informes del INDEC, este incremento estuvo apalancado primordialmente por una mayor cantidad de bienes exportados, compensando una leve retracción en los precios internacionales.</li>
+            </ul>
+        </section>
+
+        <!-- 8. Grandes Rubros de Exportación -->
+        <section id="rubros">
+            <h2><i class="fa-solid fa-pie-chart"></i> 6. Estructura por Grandes Rubros de Exportación</h2>
+            <p>La canasta exportadora argentina mantiene una estructura tradicional fuertemente anclada en la agroindustria y los productos primarios. A partir de los datos provistos en los archivos institucionales, se cuenta con el desglose porcentual oficial para los primeros años del período:</p>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Año</th>
+                            <th>Total Exportaciones (USD M)</th>
+                            <th>Productos Primarios (PP %)</th>
+                            <th>Manuf. Origen Agropecuario (MOA %)</th>
+                            <th>Manuf. Origen Industrial (MOI %)</th>
+                            <th>Combustibles y Energía (CyE %)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>2021</strong></td>
+                            <td>$77.934</td>
+                            <td>28.0%</td>
+                            <td>40.0%</td>
+                            <td>26.0%</td>
+                            <td>7.0%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2022</strong></td>
+                            <td>$88.446</td>
+                            <td>27.0%</td>
+                            <td>37.0%</td>
+                            <td>26.0%</td>
+                            <td>9.0%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2023</strong></td>
+                            <td>$66.788</td>
+                            <td><em>Pendiente</em></td>
+                            <td><em>Pendiente</em></td>
+                            <td><em>Pendiente</em></td>
+                            <td><em>Pendiente</em></td>
+                        </tr>
+                        <tr>
+                            <td><strong>2024</strong></td>
+                            <td>$79.721</td>
+                            <td><em>Pendiente</em></td>
+                            <td><em>Pendiente</em></td>
+                            <td><em>Pendiente</em></td>
+                            <td><em>Pendiente</em></td>
+                        </tr>
+                        <tr>
+                            <td><strong>2025</strong></td>
+                            <td>$87.111</td>
+                            <td><em>Pendiente</em></td>
+                            <td><em>Pendiente</em></td>
+                            <td><em>Pendiente</em></td>
+                            <td><em>Pendiente</em></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);"><em>Nota institucional: Los datos correspondientes a los años 2023, 2024 y 2025 en las planillas oficiales se encuentran pendientes de completar en detalle por rubro específico, quedando abiertos para su actualización si el análisis académico o institucional lo requiere. Las cifras de 2021 y 2022 presentan redondeos oficiales del INDEC.</em></p>
+        </section>
+
+        <!-- 9. Cambios Normativos -->
+        <section id="normativa">
+            <h2><i class="fa-solid fa-scale-balanced"></i> 7. Cambios Normativos Seleccionados y Comercio Exterior</h2>
+            <p>El comercio exterior argentino no responde de manera aislada a variables macroeconómicas o climáticas, sino que se encuentra fuertemente condicionado por modificaciones regulatorias y fiscales sectoriales:</p>
+
+            <div class="norm-grid">
+                <div class="norm-card">
+                    <span class="badge-norm">Decretos 9/2024 y 557/2024</span>
+                    <h4><i class="fa-solid fa-file-invoice-dollar"></i> Sector Lácteo (R.E. 0%)</h4>
+                    <p>Establecieron temporalmente una alícuota del <strong>0% en el reintegro a la exportación</strong> para determinados productos lácteos. Vigentes inicialmente del 1 de enero al 30 de junio de 2024, y prorrogados posteriormente hasta el 30 de junio de 2025.</p>
+                </div>
+                <div class="norm-card">
+                    <span class="badge-norm">Decreto 682/2025</span>
+                    <h4><i class="fa-solid fa-landmark"></i> Derechos de Exportación (0%)</h4>
+                    <p>Fijó temporalmente en septiembre de 2025 una alícuota de <strong>0% de derecho de exportación</strong> para ciertas mercaderías bajo condiciones específicas y plazos determinados por la normativa oficial.</p>
+                </div>
+            </div>
+            <p style="margin-top: 1.5rem; font-size: 0.95rem;">Estas medidas demuestran que las herramientas fiscales y aduaneras operan de forma heterogénea, sectorial y temporal, impactando directamente sobre la competitividad de las cadenas de valor exportadoras.</p>
+        </section>
+
+        <!-- 10. Conclusiones -->
+        <section id="conclusiones">
+            <h2><i class="fa-solid fa-clipboard-check"></i> 8. Conclusión General del Proyecto</h2>
+            <p>El análisis integral del quinquenio 2021-2025 refleja con claridad la alta volatilidad estructural que caracteriza al comercio exterior argentino. Tras alcanzar un pico histórico en 2022 impulsado por precios internacionales favorables, el país experimentó un desplome severo en 2023 producto de factores climáticos adversos (la sequía).</p>
+            <p>Sin embargo, la posterior y marcada recuperación observada durante 2024 y 2025 puso de manifiesto la resiliencia de la oferta exportable nacional, traccionada en esta última etapa por un incremento genuino en los volúmenes físicos comercializados al exterior.</p>
+            <p>Como conclusión fundamental para la formación en <strong>Comercio Internacional y Despacho Aduanero</strong>, se destaca que el estudio riguroso de las exportaciones exige ponderar simultáneamente tres dimensiones inseparables: la estadística cuantitativa (montos y cantidades), la composición sectorial de la canasta de bienes y el marco regulatorio y fiscal vigente en cada posición arancelaria.</p>
+        </section>
+
+        <!-- 11. Fuentes -->
+        <section id="fuentes">
+            <h2><i class="fa-solid fa-book-bookmark"></i> 9. Fuentes y Referencias Oficiales</h2>
+            <p>Las fuentes de información utilizadas para respaldar el presente trabajo académico comprenden estadísticas oficiales y normativa publicada:</p>
+            <ul class="sources-list">
+                <li>
+                    <i class="fa-solid fa-link"></i>
+                    <div><strong>INDEC:</strong> Intercambio Comercial Argentino (ICA) y cuadros de exportación por grandes rubros (Series estadísticas 2021-2025). <a href="https://www.indec.gob.ar/" target="_blank">https://www.indec.gob.ar/</a></div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-link"></i>
+                    <div><strong>Boletín Oficial de la República Argentina:</strong> Decreto 9/2024 y Decreto 557/2024 (Modificación de reintegros sector lácteo). <a href="https://www.boletinoficial.gob.ar/" target="_blank">https://www.boletinoficial.gob.ar/</a></div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-link"></i>
+                    <div><strong>Argentina.gob.ar:</strong> Decreto 682/2025 (Medidas temporales de derechos de exportación). <a href="https://www.argentina.gob.ar/" target="_blank">https://www.argentina.gob.ar/</a></div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-link"></i>
+                    <div><strong>Ministerio de Relaciones Exteriores, Comercio Internacional y Culto:</strong> Informes de análisis del comercio de bienes de la Argentina (2024-2025). <a href="https://cancilleria.gob.ar/" target="_blank">https://cancilleria.gob.ar/</a></div>
+                </li>
+            </ul>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Proyecto Académico de Comercio Internacional y Despacho Aduanero</p>
+        <p>Evolución de las Exportaciones Argentinas (2021-2025)</p>
+        <p style="font-size: 0.8rem; color: #64748b; margin-top: 1rem;">Desarrollado para publicación en plataformas web (Netlify).</p>
+    </footer>
+
+    <!-- JavaScript for Chart and Mobile Menu -->
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navList = document.getElementById('nav-list');
+
+        mobileMenu.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+
+        // Chart.js Initialization
+        const ctx = document.getElementById('exportChart').getContext('2d');
+        const exportChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['2021', '2022', '2023', '2024', '2025'],
+                datasets: [
+                    {
+                        label: 'Exportaciones (Millones USD)',
+                        data: [77934, 88446, 66788, 79721, 87111],
+                        backgroundColor: 'rgba(27, 54, 93, 0.85)',
+                        borderColor: 'rgba(27, 54, 93, 1)',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        order: 2
+                    },
+                    {
+                        label: 'Tendencia (Millones USD)',
+                        data: [77934, 88446, 66788, 79721, 87111],
+                        type: 'line',
+                        borderColor: '#d99b26',
+                        backgroundColor: '#d99b26',
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#d99b26',
+                        fill: false,
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: 'Inter',
+                                weight: '500'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += 'USD ' + context.parsed.y.toLocaleString() + ' millones';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: {
+                            color: '#e2e8f0'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return 'USD ' + value.toLocaleString() + 'M';
+                            },
+                            font: {
+                                family: 'Inter'
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                family: 'Inter',
+                                weight: '600'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
